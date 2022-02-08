@@ -1,0 +1,141 @@
+#pragma once
+
+extern "C"
+{
+
+#include <libavformat/avformat.h>
+#include <libavutil/frame.h>
+
+}
+
+#include "clip/error.h"
+
+
+namespace clip
+{
+
+
+class Frame
+{
+public:
+    Frame(): frame_(NULL) {}
+
+    Frame(
+        AVSampleFormat sampleFormat,
+        uint64_t channelLayout,
+        int sampleRate,
+        int sampleCount)
+    {
+        this->frame_ = av_frame_alloc();
+
+        if (!this->frame_)
+        {
+            throw VideoError("Error allocating an audio frame");
+        }
+
+        this->frame_->format = sampleFormat;
+        this->frame_->channel_layout = channelLayout;
+        this->frame_->sample_rate = sampleRate;
+        this->frame_->nb_samples = sampleCount;
+
+        if (sampleCount)
+        {
+            if (av_frame_get_buffer(this->frame_, 0) < 0)
+            {
+                throw VideoError("Error allocating an audio buffer");
+            }
+        }
+    }
+
+    Frame(AVPixelFormat pixelFormat, int height, int width)
+    {
+        this->frame_ = av_frame_alloc();
+
+        if (!this->frame_)
+        {
+            throw VideoError("Error allocating a picture frame");
+        }
+
+        this->frame_->format = pixelFormat;
+        this->frame_->height = height;
+        this->frame_->width  = width;
+
+        /* allocate the buffers for the frame data */
+        if (av_frame_get_buffer(this->frame_, 0) < 0)
+        {
+            throw VideoError("Could not allocate frame data.");
+        }
+    }
+
+    ~Frame()
+    {
+        if (this->frame_)
+        {
+            av_frame_free(&this->frame_);
+        }
+    }
+
+    Frame(Frame &&other) : frame_(other.frame_)
+    {
+        other.frame_ = NULL;
+    }
+
+    Frame &operator=(Frame &&other)
+    {
+        if (this->frame_)
+        {
+            av_frame_free(&this->frame_);
+        }
+
+        this->frame_ = other.frame_;
+        other.frame_ = NULL;
+
+        return *this;
+    }
+
+    operator AVFrame * ()
+    {
+        return this->frame_;
+    }
+
+    const AVFrame * operator->() const
+    {
+        return this->frame_;
+    }
+
+    AVFrame * operator->()
+    {
+        return this->frame_;
+    }
+
+    operator bool ()
+    {
+        return (this->frame_ != NULL);
+    }
+
+    Frame & MakeWritable()
+    {
+        // The encoder may still be using the last frame passed ot it.
+        // Create a new frame if necessary.
+        //
+        // If a reference count as been incremented, this function makes a deep
+        // copy of the frame. Otherwise, nothing happens.
+
+        int result = av_frame_make_writable(this->frame_);
+
+        if (result < 0)
+        {
+            throw VideoError("Failed to av_frame_make_writable");
+        }
+
+        return *this;
+    }
+
+private:
+    AVFrame * frame_;
+};
+
+
+
+
+} // end namespace clip
