@@ -1,4 +1,17 @@
+/**
+  * @file output_context.h
+  * 
+  * @brief Wrapper around AVFormatContext.
+  *     (Renamed to OutputContext to better reflect its usage.)
+  * 
+  * @author Jive Helix (jivehelix@gmail.com)
+  * @date 11 Feb 2022
+  * @copyright Jive Helix
+  * Licensed under the MIT license. See LICENSE file.
+**/
+
 #pragma once
+
 
 extern "C"
 {
@@ -13,6 +26,14 @@ extern "C"
 #include "clip/dictionary.h"
 
 
+#ifdef ff_const59
+// No longer part of ffmpeg, but it was still there in version 4.4
+#define FF_CONST_CAST(type, arg) const_cast<ff_const59 type *>(arg)
+#else
+#define FF_CONST_CAST(type, arg) arg
+#endif
+
+
 namespace clip
 {
 
@@ -23,28 +44,16 @@ private:
     class Context
     { 
     public:
-        Context(const std::string &fileName)
+        Context(const AVOutputFormat *outputFormat)
             :
             context_(NULL)
         {
             /* allocate the output media context */
             avformat_alloc_output_context2(
                 &this->context_,
+                FF_CONST_CAST(AVOutputFormat, outputFormat),
                 NULL,
-                NULL,
-                fileName.c_str());
-
-            if (!this->context_)
-            {
-                std::cerr << "Could not deduce output format from file extension: "
-                    << "using MPEG." << std::endl;
-
-                avformat_alloc_output_context2(
-                    &this->context_,
-                    NULL,
-                    "mpeg",
-                    fileName.c_str());
-            }
+                NULL);
 
             if (!this->context_)
             {
@@ -59,8 +68,12 @@ private:
             other.context_ = NULL;
         }
 
+        Context(const Context &) = delete;
+
         Context & operator=(Context &&other)
         {
+            assert(this != &other);
+
             if (this->context_)
             {
                 avformat_free_context(this->context_);
@@ -93,13 +106,17 @@ private:
 
 
 public:
-    OutputContext(const std::string &fileName)
+    OutputContext(
+        const AVOutputFormat *outputFormat,
+        const std::string &fileName)
         :
-        context_(fileName)
+        context_(outputFormat),
+        isInitialized_(false),
+        isFinalized_(false)
     {
-        /* open the output file, if needed */
-        if (!(this->context_.Get()->oformat->flags & AVFMT_NOFILE))
+        if (!(outputFormat->flags & AVFMT_NOFILE))
         {
+            // We need a file.
             int result = avio_open(
                 &this->context_.Get()->pb,
                 fileName.c_str(),
@@ -115,6 +132,19 @@ public:
 
     ~OutputContext()
     {
+        if (!this->isFinalized_)
+        {
+            try
+            {
+                this->Finalize();
+            }
+            catch (ClipError &error)
+            {
+                // Do not propagate exception from the destructor.
+                std::cerr << error.what() << std::endl;
+            }
+        }
+
         if (!this->context_.Get())
         {
             return;
@@ -137,38 +167,57 @@ public:
         return this->context_.Get();
     }
 
-    bool WriteHeader(Dictionary &codecOptions)
+    /**
+     ** This must be called after all outputs have been created with this
+     ** context.
+     **/
+    void Initialize(Dictionary &codecOptions)
     {
-        int result = avformat_write_header(this->context_.Get(), codecOptions.Get());
+        int result = avformat_write_header(
+            this->context_.Get(),
+            codecOptions.Get());
 
         if (result < 0)
         {
-            std::cerr << "Error occurred writing header: "
-                      << clip::AvErrorToString(result) << std::endl;
-
-            return false;
+            throw ClipError(
+                std::string("Error initializing OutputContext: ")
+                + clip::AvErrorToString(result));
         }
-        
-        return true;
+
+        this->isInitialized_ = true;
     }
 
-    bool WriteTrailer()
+    /**
+     ** Call this only when done writing to all associated outputs.
+     **/
+    void Finalize()
     {
         int result = av_write_trailer(this->context_.Get());
 
         if (result < 0)
         {
-            std::cerr << "Error occurred writing trailer: "
-                      << clip::AvErrorToString(result) << std::endl;
-
-            return false;
+            throw ClipError(
+                std::string("Error finalizing OutputContext: ")
+                + clip::AvErrorToString(result));
         }
-        
-        return true;
+
+        this->isFinalized_ = true;
+    }
+
+    bool GetIsInitialized() const
+    {
+        return this->isInitialized_;
+    }
+
+    bool GetIsFinalized() const
+    {
+        return this->isFinalized_;
     }
 
 protected:
     Context context_;
+    bool isInitialized_;
+    bool isFinalized_;
 };
 
 

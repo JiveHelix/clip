@@ -1,4 +1,16 @@
+/**
+  * @file frame.h
+  * 
+  * @brief Wrapper around AVFrame.
+  * 
+  * @author Jive Helix (jivehelix@gmail.com)
+  * @date 11 Feb 2022
+  * @copyright Jive Helix
+  * Licensed under the MIT license. See LICENSE file.
+**/
+
 #pragma once
+
 
 extern "C"
 {
@@ -40,6 +52,8 @@ public:
 
         if (sampleCount)
         {
+            // A non-zero sample count has been requested.
+            // Allocate the frame's buffers.
             if (av_frame_get_buffer(this->frame_, 0) < 0)
             {
                 throw VideoError("Error allocating an audio buffer");
@@ -75,13 +89,21 @@ public:
         }
     }
 
-    Frame(Frame &&other) : frame_(other.frame_)
+    Frame(const Frame &) = delete;
+
+    Frame(Frame &&other)
+        :
+        frame_(other.frame_)
     {
         other.frame_ = NULL;
     }
 
+    Frame &operator=(const Frame &) = delete;
+
     Frame &operator=(Frame &&other)
     {
+        assert(this != &other);
+
         if (this->frame_)
         {
             av_frame_free(&this->frame_);

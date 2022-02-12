@@ -1,4 +1,16 @@
+/**
+  * @file channel_layout.h
+  * 
+  * @brief Wrapper around uint64_t, used by FFMPEG to represent channel layout.
+  * 
+  * @author Jive Helix (jivehelix@gmail.com)
+  * @date 11 Feb 2022
+  * @copyright Jive Helix
+  * Licensed under the MIT license. See LICENSE file.
+**/
+
 #pragma once
+
 
 extern "C"
 {

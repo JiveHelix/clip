@@ -1,4 +1,16 @@
+/**
+  * @file circle_gradient.h
+  * 
+  * @brief Creates a moving circle gradient.
+  * 
+  * @author Jive Helix (jivehelix@gmail.com)
+  * @date 11 Feb 2022
+  * @copyright Jive Helix
+  * Licensed under the MIT license. See LICENSE file.
+**/
+
 #pragma once
+
 
 extern "C"
 {
@@ -18,10 +30,17 @@ namespace clip
 {
 
 
-class RgbTestPattern
+class CircleGradient
 {
 public:
-    RgbTestPattern(const VideoOptions &options)
+    using ColorMap = tau::ColorMap<tau::RgbMatrix<uint8_t>>;
+    using Output = ColorMap::Colors;
+
+    static_assert(
+        tau::MatrixTraits<Output>::columns != Eigen::Dynamic,
+        "Expected compile-time column count");
+
+    CircleGradient(const VideoOptions &options)
         :
         time_(0.0),
         pathStep_(tau::Angles<double>::tau / (6 * options.framesPerSecond)),
@@ -41,52 +60,20 @@ public:
 
     }
 
+    Eigen::Index GetDataWidth() const
+    {
+        return this->width_ * tau::MatrixTraits<Output>::columns;
+    }
+
     void Reset()
     {
         this->time_ = 0.0;
     }
 
-    void FillFrame(AVFrame *avFrame)
+    void FillFrame(Output *output)
     {
         this->ComputeRawDistances_(this->GetNextPath());
-
-        int stride = avFrame->linesize[0];
-        int expectedWidth = this->width_ * 3;
-        int height = this->height_;
-
-        ColorMap::OutputType mapped;
-        this->colorMap_(this->raw_, &mapped);
-
-        const uint8_t *data;
-        size_t fieldSize;
-
-        if (stride != expectedWidth)
-        {
-            assert(stride > expectedWidth);
-            fieldSize = static_cast<size_t>(height * stride);
-
-            VideoFrame withStride(height, stride);
-
-            Map target(
-                withStride.data(),
-                height,
-                expectedWidth,
-                Eigen::OuterStride<>(stride));
-
-            target = mapped.reshaped<Eigen::RowMajor>(
-                height,
-                expectedWidth);
-            
-            data = withStride.data();
-        }
-        else
-        {
-            fieldSize = static_cast<size_t>(height * expectedWidth);
-            data = mapped.data();
-        }
-
-        memcpy(avFrame->data[0], data, fieldSize);
-
+        this->colorMap_(this->raw_, output);
         this->time_ += this->pathStep_;
     }
 
@@ -94,13 +81,6 @@ private:
 
     using Raw = 
         Eigen::Matrix<size_t, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
-
-    using VideoFrame =
-        Eigen::Matrix<uint8_t, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
-
-    using Map = Eigen::Map<VideoFrame, 0, Eigen::OuterStride<>>;
-
-    using ColorMap = tau::ColorMap<tau::RgbMatrix<uint8_t>>;
 
     struct Point
     {

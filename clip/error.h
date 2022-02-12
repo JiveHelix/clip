@@ -1,4 +1,16 @@
+/**
+  * @file error.h
+  * 
+  * @brief Exceptions thrown by this library.
+  * 
+  * @author Jive Helix (jivehelix@gmail.com)
+  * @date 11 Feb 2022
+  * @copyright Jive Helix
+  * Licensed under the MIT license. See LICENSE file.
+**/
+
 #pragma once
+
 
 extern "C"
 {
@@ -7,7 +19,6 @@ extern "C"
 
 }
 
-
 #include "jive/create_exception.h"
 
 
@@ -15,7 +26,13 @@ namespace clip
 {
 
 
-CREATE_EXCEPTION(VideoError, std::runtime_error);
+CREATE_EXCEPTION(ClipError, std::runtime_error);
+CREATE_EXCEPTION(VideoError, ClipError);
+CREATE_EXCEPTION(AudioError, ClipError);
+
+// Report an error from one of ffmpeg's library functions.
+CREATE_EXCEPTION(FfmpegError, ClipError);
+
 
 inline std::string AvErrorToString(int errorNumber)
 {

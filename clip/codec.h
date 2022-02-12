@@ -1,4 +1,16 @@
+/**
+  * @file codec.h
+  * 
+  * @brief Wrapper around AVCodec.
+  * 
+  * @author Jive Helix (jivehelix@gmail.com)
+  * @date 11 Feb 2022
+  * @copyright Jive Helix
+  * Licensed under the MIT license. See LICENSE file.
+**/
+
 #pragma once
+
 
 extern "C"
 {

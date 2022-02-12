@@ -3,6 +3,7 @@
  * @copyright 2022 Jive Helix
  * Licensed under the MIT license. See LICENSE file.
  */
+
 #include <catch2/catch.hpp>
 
 #include "clip/channel_layout.h"

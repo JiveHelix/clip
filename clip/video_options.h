@@ -1,3 +1,14 @@
+/**
+  * @file video_options.h
+  * 
+  * @brief Options to configure clip::VideoOutput.
+  * 
+  * @author Jive Helix (jivehelix@gmail.com)
+  * @date 11 Feb 2022
+  * @copyright Jive Helix
+  * Licensed under the MIT license. See LICENSE file.
+**/
+
 #pragma once
 
 
@@ -59,6 +70,15 @@ struct VideoOptions
             .profile = FF_PROFILE_H264_HIGH,
             .preset = Preset::medium
         };
+
+        return result;
+    }
+
+    static VideoOptions Make4k()
+    {
+        auto result = MakeDefault();
+        result.height = 2160;
+        result.width = 3840;
 
         return result;
     }

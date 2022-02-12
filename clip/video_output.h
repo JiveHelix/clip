@@ -1,4 +1,16 @@
+/**
+  * @file video_output.h
+  * 
+  * @brief Creates a video output stream.
+  * 
+  * @author Jive Helix (jivehelix@gmail.com)
+  * @date 11 Feb 2022
+  * @copyright Jive Helix
+  * Licensed under the MIT license. See LICENSE file.
+**/
+
 #pragma once
+
 
 #include "clip/reformat.h"
 #include "clip/output.h"
@@ -17,11 +29,11 @@ class VideoOutput : public Output
 {
 public:
     VideoOutput(
-        OutputContext &outputContext,
+        std::shared_ptr<OutputContext> outputContext,
         Dictionary &codecOptions,
         VideoOptions &videoOptions)
         :
-        Output(outputContext, outputContext->oformat->video_codec),
+        Output(outputContext, (*outputContext)->oformat->video_codec),
         options_(videoOptions)
     {
         codecOptions.Set(

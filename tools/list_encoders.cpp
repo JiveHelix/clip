@@ -1,3 +1,14 @@
+/**
+  * @file list_encoders.cpp
+  * 
+  * @brief Show installed encoders.
+  * 
+  * @author Jive Helix (jivehelix@gmail.com)
+  * @date 11 Feb 2022
+  * @copyright Jive Helix
+  * Licensed under the MIT license. See LICENSE file.
+**/
+
 extern "C"
 {
 
@@ -33,39 +44,3 @@ int main()
 
     return 0;
 }
-
-
-/*
-
-mov_write_packet
-    mov_write_single_packet 
-        ff_mov_write_packet
-
-mov_write_subtitle_end_packet
-    mov_write_single_packet 
-        ff_mov_write_packet
-
-mov_write_squashed_packet
-    mov_write_single_packet 
-        ff_mov_write_packet
-
-mov_write_header
-    mov_create_chapter_track
-        ff_mov_write_packet
-
-mov_write_trailer
-    mov_create_chapter_track
-        ff_mov_write_packet
-
-mov_write_header
-    mov_create_timecode_track
-        ff_mov_write_packet
-
-
-
-
-
-
-
-
-   */

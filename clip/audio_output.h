@@ -1,4 +1,16 @@
+/**
+  * @file audio_output.h
+  * 
+  * @brief Creates an audio output tied to a stream.
+  * 
+  * @author Jive Helix (jivehelix@gmail.com)
+  * @date 11 Feb 2022
+  * @copyright Jive Helix
+  * Licensed under the MIT license. See LICENSE file.
+**/
+
 #pragma once
+
 
 #include <limits>
 
@@ -26,12 +38,12 @@ struct AudioOptions
     {
         if (!codec.SupportsSampleRate(this->sampleRate))
         {
-            throw VideoError("Sample rate not supported");
+            throw AudioError("Sample rate not supported");
         }
 
         if (!codec.SupportsChannelLayout(this->channelLayout.Get()))
         {
-            throw VideoError("Channel layout not supported");
+            throw AudioError("Channel layout not supported");
         }
     }
 };
@@ -42,15 +54,16 @@ class AudioOutput : public Output
 {
 public:
     AudioOutput(
-        OutputContext &outputContext,
+        std::shared_ptr<OutputContext> outputContext,
         Dictionary &codecOptions,
         const Options &audioOptions)
         :
-        Output(outputContext, outputContext->oformat->audio_codec)
+        Output(outputContext, (*outputContext)->oformat->audio_codec),
+        options_(audioOptions)
     {
         if (this->codec_->type != AVMEDIA_TYPE_AUDIO)
         {
-            throw VideoError("Not an audio codec.");
+            throw AudioError("Not an audio codec.");
         }
 
         if (this->codec_->sample_fmts)
@@ -96,7 +109,7 @@ public:
 
         if (result < 0)
         {
-            throw VideoError(
+            throw FfmpegError(
                 "avcodec_open2 failed: " + AvErrorToString(result));
         }
         
@@ -111,6 +124,13 @@ public:
         {
             sampleCount = codecContext->frame_size;
         }
+
+        if (sampleCount <= 0)
+        {
+            throw AudioError("Frame size must be positive.");
+        }
+        
+        this->sampleCount_ = static_cast<size_t>(sampleCount);
 
         this->frame_ = Frame(
             codecContext->sample_fmt,
@@ -134,8 +154,7 @@ public:
 
         if (result < 0)
         {
-            fprintf(stderr, "Could not copy the stream parameters\n");
-            throw VideoError("AV Error");
+            throw FfmpegError("Could not copy stream parameters.");
         }
     }
 
@@ -169,12 +188,22 @@ public:
         return this->timeStamp_;
     }
 
+    size_t GetSampleCount() const
+    {
+        return this->sampleCount_;
+    }
+
+    const Options & GetOptions() const
+    {
+        return this->options_;
+    }
+
 private:
     void FinishFrame_()
     {
         if (this->codecContext_->sample_fmt != Options::Format::value)
         {
-            int sampleCount = this->frame_->nb_samples;
+            int sampleCount = static_cast<int>(this->sampleCount_);
 
             /* convert to destination format */
             int result = swr_convert(
@@ -186,7 +215,7 @@ private:
 
             if (result < 0)
             {
-                throw VideoError("Error while converting");
+                throw FfmpegError("Error while converting");
             }
         }
         
@@ -195,12 +224,14 @@ private:
     }
 
 private:
+    Options options_;
     Resample<Options> resample_;
     Frame frame_;
     Frame intermediate_;
 
     // Presentation time stamp of the next frame that will be generated.
     clip::TimeStamp timeStamp_;
+    size_t sampleCount_;
 };
 
 

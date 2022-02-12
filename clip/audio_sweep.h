@@ -1,4 +1,16 @@
+/**
+  * @file audio_sweep.h
+  * 
+  * @brief Generate a swept audio signal.
+  * 
+  * @author Jive Helix (jivehelix@gmail.com)
+  * @date 11 Feb 2022
+  * @copyright Jive Helix
+  * Licensed under the MIT license. See LICENSE file.
+**/
+
 #pragma once
+
 
 extern "C"
 {
@@ -9,6 +21,9 @@ extern "C"
 
 #include <cmath>
 #include <cassert>
+#include "tau/angles.h"
+#include "Eigen/Dense"
+#include "clip/sample_traits.h"
 
 
 namespace clip
@@ -19,17 +34,24 @@ template<typename Options>
 class AudioSweep
 {
 public:
-    static constexpr double pi = static_cast<double>(M_PI);
+
+    using Sample = typename Options::Format::type;
+    
+    using Output = Eigen::VectorX<Sample>;
+
+    static constexpr auto pi = tau::Angles<double>::pi;
 
     AudioSweep(
         const Options &options,
         double start_hz,
         double increase_hzPerSecond,
-        double stop_hz)
+        double stop_hz,
+        size_t sampleCount)
         :
         options_(options),
         start_hz_(start_hz),
         stop_hz_(stop_hz),
+        sampleCount_(static_cast<ssize_t>(sampleCount)),
         time_(0.0),
         samplePeriod_(2 * pi * start_hz / options.sampleRate),
         samplePeriodIncrement_(
@@ -37,7 +59,7 @@ public:
             / (options.sampleRate * options.sampleRate)),
         maxSamplePeriod_(2 * pi * stop_hz / options.sampleRate)
     {
-
+        assert(sampleCount <= std::numeric_limits<ssize_t>::max());
     }
 
     void Reset()
@@ -59,56 +81,31 @@ public:
 
     static double GetSample(double time)
     {
-        // Scale the integral value to a sensible range.
+        // Harmonics:
+        //  1st .5
+        //  2nd 1
+        //  3rd 1.5
+        //  4th 2.0
+        //  5th 2.5
+        //
+        // Build up three different tones at the 2nd, 4th, and 5th harmonics.
         double value1 = sin(time);
-
         double value2 = sin(2.0 * time) * .75;
-
         double value3 = sin(2.5 * time) * .8;
         
         return (value1 + value2 + value3) / 3.0;
     }
 
-
-    void FillFrame(AVFrame *frame)
+    void FillFrame(Output *output)
     {
-        using Sample = typename Options::Format::type;
-        int channelCount = this->options_.channelLayout.GetChannelCount();
-        Sample *out = reinterpret_cast<Sample *>(frame->data[0]);
-
-        assert(
-            frame->linesize[0]
-            >= frame->nb_samples * static_cast<int>(sizeof(Sample)));
-
-        for (int j = 0; j < frame->nb_samples; j++)
+        if (output->size() != this->sampleCount_)
         {
-            Sample value;
+            output->resize(this->sampleCount_);
+        }
 
-            if constexpr (std::is_integral_v<Sample>)
-            {
-                // Scale the integral value to a sensible range.
-                value = static_cast<Sample>(GetSample(this->time_) * 20000);
-            }
-            else
-            {
-                // Leave the floating-point value between -1.0 and 1.0
-                value = static_cast<Sample>(GetSample(this->time_));
-            }
-
-            for (int i = 0; i < channelCount; i++)
-            {
-                if constexpr (Options::Format::isPlanar)
-                {
-                    // Each channel is stored in its own data plane.
-                    out = reinterpret_cast<Sample *>(frame->data[i]) + j;
-                    *out = value;
-                }
-                else
-                {
-                    // Interleaved.
-                    *out++ = value;
-                }
-            }
+        for (ssize_t i = 0; i < this->sampleCount_; ++i)
+        {
+            (*output)[i] = Scale<SampleTraits<Sample>>(GetSample(this->time_));
 
             this->time_ += this->samplePeriod_;
 
@@ -116,7 +113,6 @@ public:
             {
                 this->samplePeriod_ += this->samplePeriodIncrement_;
             }
-
         }
     }
 
@@ -124,6 +120,7 @@ private:
     Options options_;
     double start_hz_;
     double stop_hz_;
+    ssize_t sampleCount_;
     double time_;
     double samplePeriod_;
     double samplePeriodIncrement_;

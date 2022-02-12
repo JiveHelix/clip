@@ -1,11 +1,37 @@
-add_executable(demo demo.cpp)
+add_executable(audio_and_video audio_and_video.cpp)
 
 target_link_libraries(
-    demo
+    audio_and_video
     PRIVATE
     project_warnings
     project_options
-    clip
-    CONAN_PKG::tau)
+    clip)
 
-install(TARGETS demo DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+add_executable(video video.cpp)
+
+target_link_libraries(
+    video
+    PRIVATE
+    project_warnings
+    project_options
+    clip)
+
+
+add_executable(lossless_video lossless_video.cpp)
+
+target_link_libraries(
+    lossless_video
+    PRIVATE
+    project_warnings
+    project_options
+    clip)
+
+
+install(
+    TARGETS
+    audio_and_video
+    video
+    lossless_video
+    DESTINATION
+    ${CMAKE_INSTALL_BINDIR})

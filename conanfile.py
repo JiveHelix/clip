@@ -3,11 +3,11 @@ from conans import ConanFile, CMake
 
 class ClipConan(ConanFile):
     name = "clip"
-    version = "1.0.0"
+    version = "1.1.0"
 
     scm = {
         "type": "git",
-        "url": "auto",
+        "url": "https://github.com/JiveHelix/clip.git",
         "revision": "auto",
         "submodule": "recursive"}
 
@@ -41,8 +41,8 @@ class ClipConan(ConanFile):
         self.test_requires("catch2/2.13.8")
 
     def requirements(self):
-        self.requires("jive/[~1.0]")
-        self.requires("tau/[~1.0]")
+        self.requires("jive/[~1]")
+        self.requires("tau/[~1.1]")
         self.requires("eigen/3.4.0")
         self.requires("zlib/1.2.11")
         self.requires("ffmpeg/4.4")

@@ -1,4 +1,16 @@
+/**
+  * @file sample_format.h
+  * 
+  * @brief Traits of supported audio sample formats.
+  * 
+  * @author Jive Helix (jivehelix@gmail.com)
+  * @date 11 Feb 2022
+  * @copyright Jive Helix
+  * Licensed under the MIT license. See LICENSE file.
+**/
+
 #pragma once
+
 
 extern "C"
 {
@@ -91,7 +103,7 @@ struct SampleType<AV_SAMPLE_FMT_DBLP>
 
 
 template<typename First, typename... Others>
-constexpr bool IsAnyOf(First &&first, Others &&...others)
+static constexpr bool IsAnyOf(First &&first, Others &&...others)
 {
     return ((first == others) || ...);
 }

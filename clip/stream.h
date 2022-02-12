@@ -1,4 +1,16 @@
+/**
+  * @file stream.h
+  * 
+  * @brief Wrapper around AVStream.
+  * 
+  * @author Jive Helix (jivehelix@gmail.com)
+  * @date 11 Feb 2022
+  * @copyright Jive Helix
+  * Licensed under the MIT license. See LICENSE file.
+**/
+
 #pragma once
+
 
 extern "C"
 {
@@ -40,7 +52,7 @@ public:
     // The user is NOT required to call avformat_free_context on the returned
     // AVStream *.
     // The user IS required to call avformat_free_context on the
-    // AVFormatContext that this streem was created on.
+    // AVFormatContext that this stream was created on.
  
     operator const AVStream * () const
     {

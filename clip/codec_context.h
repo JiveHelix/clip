@@ -1,4 +1,16 @@
+/**
+  * @file codec_context.h
+  * 
+  * @brief Wrapper around AVCodecContext.
+  * 
+  * @author Jive Helix (jivehelix@gmail.com)
+  * @date 11 Feb 2022
+  * @copyright Jive Helix
+  * Licensed under the MIT license. See LICENSE file.
+**/
+
 #pragma once
+
 
 extern "C"
 {
@@ -8,6 +20,7 @@ extern "C"
 }
 
 #include "clip/error.h"
+
 
 namespace clip
 {

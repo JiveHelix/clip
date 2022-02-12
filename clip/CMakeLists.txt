@@ -8,7 +8,8 @@ target_link_libraries(
     INTERFACE
     CONAN_PKG::ffmpeg
     CONAN_PKG::fmt
-    CONAN_PKG::jive)
+    CONAN_PKG::jive
+    CONAN_PKG::tau)
 
 install(
     DIRECTORY ${PROJECT_SOURCE_DIR}/clip
