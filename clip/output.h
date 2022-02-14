@@ -116,7 +116,7 @@ protected:
             this->packet_->stream_index = this->stream_->index;
 
 #ifndef NDEBUG
-            LogPacket(std::cout, this->outputContext_.get(), this->packet_);
+            LogPacket(std::cout, *this->outputContext_, this->packet_);
 #endif
 
             // Write the compressed frame to the media file.
