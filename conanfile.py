@@ -3,7 +3,7 @@ from conans import ConanFile, CMake
 
 class ClipConan(ConanFile):
     name = "clip"
-    version = "1.1.0"
+    version = "1.1.1"
 
     scm = {
         "type": "git",
@@ -24,6 +24,10 @@ class ClipConan(ConanFile):
     generators = "cmake"
 
     no_copy_source = True
+
+    def configure(self):
+        if self.settings.os == "Linux":
+            self.options["ffmpeg"].with_pulse = False
 
     def build(self):
         cmake = CMake(self)
