@@ -31,7 +31,11 @@ int main(int argc, char **argv)
 
     try
     {
-        CreateVideo<clip::format::Mp4, clip::CircleGradient>(
+        CreateVideo
+        <
+            clip::format::Mp4,
+            clip::CircleGradientColors<uint16_t>
+        >(
             baseName,
             clip::VideoOptions::MakeDefault(),
             streamDuration);

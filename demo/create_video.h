@@ -72,7 +72,10 @@ void CreateVideo(
 
         GenerateVideo(
             clip::VideoWriter(videoOutput),
-            Generator(videoOptions),
+            Generator(
+                videoOptions.height,
+                videoOptions.width,
+                videoOptions.framesPerSecond),
             duration);
     }
     else
@@ -89,7 +92,10 @@ void CreateVideo(
                 static_cast<size_t>(videoOptions.height),
                 dataWidth,
                 videoOutput),
-            Generator(videoOptions),
+            Generator(
+                videoOptions.height,
+                videoOptions.width,
+                videoOptions.framesPerSecond),
             duration);
     }
     

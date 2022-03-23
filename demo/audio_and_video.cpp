@@ -101,7 +101,10 @@ void CreateAudioAndVideo(
 
     outputContext->Initialize(codecOptions);
 
-    Generator generator(videoOptions);
+    Generator generator(
+        videoOptions.height,
+        videoOptions.width,
+        videoOptions.framesPerSecond);
 
     auto dataWidth = static_cast<size_t>(videoOptions.width) * pixelSizeBytes;
 
@@ -153,7 +156,11 @@ int main(int argc, char **argv)
 
     try
     {
-        CreateAudioAndVideo<clip::format::Mp4, clip::CircleGradient>(
+        CreateAudioAndVideo
+        <
+            clip::format::Mp4,
+            clip::CircleGradientColors<uint16_t>
+        >(
             baseName,
             clip::VideoOptions::MakeDefault(),
             clip::AudioOptions<AV_SAMPLE_FMT_S16P>{
