@@ -46,10 +46,7 @@ class ClipConan(ConanFile):
 
     def requirements(self):
         self.requires("jive/[~1]")
-        self.requires("tau/[~1.1]")
+        self.requires("tau/[~1]")
         self.requires("eigen/3.4.0")
-        self.requires("zlib/1.2.11")
-        self.requires("xz_utils/5.2.5")
         self.requires("ffmpeg/4.4")
-        self.requires("eigen/3.4.0")
-        self.requires("fmt/8.0.1")
+        self.requires("fmt/[~8]")

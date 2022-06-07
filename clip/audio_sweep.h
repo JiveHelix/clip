@@ -1,8 +1,8 @@
 /**
   * @file audio_sweep.h
-  * 
+  *
   * @brief Generate a swept audio signal.
-  * 
+  *
   * @author Jive Helix (jivehelix@gmail.com)
   * @date 11 Feb 2022
   * @copyright Jive Helix
@@ -21,8 +21,8 @@ extern "C"
 
 #include <cmath>
 #include <cassert>
-#include "tau/angles.h"
-#include "Eigen/Dense"
+#include <tau/angles.h>
+#include <tau/eigen_shim.h>
 #include "clip/sample_traits.h"
 
 
