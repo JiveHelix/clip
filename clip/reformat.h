@@ -12,12 +12,16 @@
 #pragma once
 
 
+#include "clip/ffmpeg_shim.h"
+FFMPEG_SHIM_PUSH_IGNORES
 extern "C"
 {
 
 #include <libswscale/swscale.h>
 
 }
+FFMPEG_SHIM_POP_IGNORES
+
 
 #include "clip/frame.h"
 #include "clip/codec_context.h"

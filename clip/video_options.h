@@ -12,12 +12,15 @@
 #pragma once
 
 
+#include "clip/ffmpeg_shim.h"
+FFMPEG_SHIM_PUSH_IGNORES
 extern "C"
 {
 
 #include <libavcodec/avcodec.h>
 
 }
+FFMPEG_SHIM_POP_IGNORES
 
 
 namespace clip

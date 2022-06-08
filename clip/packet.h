@@ -12,12 +12,16 @@
 #pragma once
 
 
+#include "clip/ffmpeg_shim.h"
+FFMPEG_SHIM_PUSH_IGNORES
 extern "C"
 {
 
 #include <libavcodec/packet.h>
 
 }
+FFMPEG_SHIM_POP_IGNORES
+
 
 #include "clip/error.h"
 #include "clip/output_context.h"

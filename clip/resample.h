@@ -12,6 +12,8 @@
 #pragma once
 
 
+#include "clip/ffmpeg_shim.h"
+FFMPEG_SHIM_PUSH_IGNORES
 extern "C"
 {
 
@@ -19,6 +21,8 @@ extern "C"
 #include <libswresample/swresample.h>
 
 }
+FFMPEG_SHIM_POP_IGNORES
+
 
 #include "clip/codec_context.h"
 #include "clip/error.h"
