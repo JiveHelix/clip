@@ -11,7 +11,7 @@
 
 #pragma once
 
-
+#include <memory>
 #include <string>
 
 #include "clip/error.h"
@@ -53,7 +53,7 @@ public:
 
 protected:
     Output(std::shared_ptr<OutputContext> outputContext, AVCodecID codecId)
-        : 
+        :
         outputContext_(outputContext),
         codec_(codecId),
         codecContext_(this->codec_),

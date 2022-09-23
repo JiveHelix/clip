@@ -12,7 +12,7 @@
 
 #pragma once
 
-
+#include <cassert>
 #include "clip/ffmpeg_shim.h"
 FFMPEG_SHIM_PUSH_IGNORES
 extern "C"

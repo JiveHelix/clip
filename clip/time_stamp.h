@@ -176,8 +176,9 @@ public:
 
     std::ostream & ShowSeconds(std::ostream &outputStream) const
     {
-        return outputStream
-            << fmt::format("{:.6g}", av_q2d(this->timeBase_) * this->count_);
+        return outputStream << fmt::format(
+            "{:.6g}",
+            av_q2d(this->timeBase_) * static_cast<double>(this->count_));
     }
 
 private:
@@ -195,9 +196,11 @@ std::ostream &operator<<(std::ostream &outputStream, const TimeStamp &timeStamp)
 class Seconds
 {
 public:
-    Seconds(const TimeStamp &timeStamp)
+    Seconds(TimeStamp &&) = delete;
+
+    Seconds(const TimeStamp &timeStamp_)
         :
-        timeStamp(timeStamp)
+        timeStamp(timeStamp_)
     {
 
     }
@@ -206,7 +209,7 @@ public:
 };
 
 
-std::ostream &operator<<(std::ostream &outputStream, const Seconds &seconds)
+std::ostream & operator<<(std::ostream &outputStream, const Seconds &seconds)
 {
     return seconds.timeStamp.ShowSeconds(outputStream);
 }

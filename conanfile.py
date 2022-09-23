@@ -3,7 +3,7 @@ from conans import ConanFile, CMake
 
 class ClipConan(ConanFile):
     name = "clip"
-    version = "1.2.2"
+    version = "1.2.3"
 
     scm = {
         "type": "git",
