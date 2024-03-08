@@ -1,8 +1,8 @@
 /**
   * @file list_encoders.cpp
-  * 
+  *
   * @brief Show installed encoders.
-  * 
+  *
   * @author Jive Helix (jivehelix@gmail.com)
   * @date 11 Feb 2022
   * @copyright Jive Helix
@@ -27,14 +27,14 @@ int main()
 
     while ((avCodec = av_codec_iterate(&iterator)))
     {
-        if (av_codec_is_encoder(avCodec) 
+        if (av_codec_is_encoder(avCodec)
                 && (avCodec->type == AVMEDIA_TYPE_VIDEO))
         {
             std::cout << avCodec->name << std::endl;
         }
     }
 
-    AVCodec *p = avcodec_find_encoder_by_name("libx264");
+    const AVCodec *p = avcodec_find_encoder_by_name("libx264");
 
     if (!p)
     {

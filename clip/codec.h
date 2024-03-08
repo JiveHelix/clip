@@ -1,8 +1,8 @@
 /**
   * @file codec.h
-  * 
+  *
   * @brief Wrapper around AVCodec.
-  * 
+  *
   * @author Jive Helix (jivehelix@gmail.com)
   * @date 11 Feb 2022
   * @copyright Jive Helix
@@ -61,7 +61,7 @@ public:
         return this->codec_;
     }
 
-    /** 
+    /**
      ** @return True if sampleRate is explicitly supported, or if unknown.
      **/
     bool SupportsSampleRate(int sampleRate) const
@@ -75,7 +75,7 @@ public:
 
         // The codec specifies supported sample rates.
         const int *it = this->codec_->supported_samplerates;
-        
+
         for (; *it; ++it)
         {
             if (*it == sampleRate)
@@ -87,22 +87,23 @@ public:
         return false;
     }
 
-    /** 
+    /**
      ** @return true if channelLayout is explicitly supported, or if unknown.
      **/
     bool SupportsChannelLayout(uint64_t channelLayout) const
     {
-        if (!this->codec_->channel_layouts)
+        if (!this->codec_->ch_layouts)
         {
             // Assuming true (only because ffmpeg sample code assumes true).
             return true;
         }
 
-        const uint64_t *it = this->codec_->channel_layouts;
+        const AVChannelLayout *it = this->codec_->ch_layouts;
 
-        for (; *it; ++it)
+        // ch_layouts is terminated with a zeroed layout.
+        for (; it->u.mask && it->nb_channels; ++it)
         {
-            if (*it == channelLayout)
+            if (it->u.mask == channelLayout)
             {
                 return true;
             }

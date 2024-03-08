@@ -1,8 +1,8 @@
 /**
   * @file resample.h
-  * 
+  *
   * @brief Convert audio samples between formats.
-  * 
+  *
   * @author Jive Helix (jivehelix@gmail.com)
   * @date 11 Feb 2022
   * @copyright Jive Helix
@@ -69,7 +69,7 @@ class Resample
         av_opt_set_int(
             this->context_,
             "out_channel_count",
-            outputCodec->channels,
+            outputCodec->ch_layout.nb_channels,
             0);
 
         av_opt_set_int(

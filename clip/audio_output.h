@@ -79,14 +79,14 @@ public:
         }
 
         this->codecContext_->bit_rate = audioOptions.bitRate;
-        
+
         audioOptions.RequireCompatible(this->codec_);
 
         this->codecContext_->sample_rate = audioOptions.sampleRate;
 
-        this->codecContext_->channel_layout = audioOptions.channelLayout.Get();
+        audioOptions.channelLayout.MakeCopy(&this->codecContext_->ch_layout);
 
-        this->codecContext_->channels =
+        this->codecContext_->ch_layout.nb_channels =
             audioOptions.channelLayout.GetChannelCount();
 
         this->stream_->time_base = AVRational{1, audioOptions.sampleRate};
@@ -112,10 +112,10 @@ public:
             throw FfmpegError(
                 "avcodec_open2 failed: " + AvErrorToString(result));
         }
-        
+
         int sampleCount;
 
-        if (this->codec_->capabilities 
+        if (this->codec_->capabilities
                 & AV_CODEC_CAP_VARIABLE_FRAME_SIZE)
         {
             sampleCount = 10000;
@@ -129,12 +129,12 @@ public:
         {
             throw AudioError("Frame size must be positive.");
         }
-        
+
         this->sampleCount_ = static_cast<size_t>(sampleCount);
 
         this->frame_ = Frame(
             codecContext->sample_fmt,
-            codecContext->channel_layout,
+            codecContext->ch_layout.u.mask,
             codecContext->sample_rate,
             sampleCount);
 
@@ -142,7 +142,7 @@ public:
         {
             this->intermediate_ = Frame(
                 Options::Format::value,
-                codecContext->channel_layout,
+                codecContext->ch_layout.u.mask,
                 codecContext->sample_rate,
                 sampleCount);
         }

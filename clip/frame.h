@@ -25,6 +25,7 @@ FFMPEG_SHIM_POP_IGNORES
 
 
 #include "clip/error.h"
+#include "clip/channel_layout.h"
 
 
 namespace clip
@@ -50,7 +51,9 @@ public:
         }
 
         this->frame_->format = sampleFormat;
-        this->frame_->channel_layout = channelLayout;
+
+        detail::ChannelLayout layout(channelLayout);
+        layout.MakeCopy(&this->frame_->ch_layout);
         this->frame_->sample_rate = sampleRate;
         this->frame_->nb_samples = sampleCount;
 

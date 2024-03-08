@@ -51,5 +51,5 @@ class ClipConan(ConanFile):
         self.requires("jive/[~1]")
         self.requires("tau/[~1]")
         self.requires("eigen/3.4.0")
-        self.requires("ffmpeg/4.4")
-        self.requires("fmt/[~8]")
+        self.requires("ffmpeg/6.1")
+        self.requires("fmt/[~10]")

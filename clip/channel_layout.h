@@ -1,8 +1,8 @@
 /**
   * @file channel_layout.h
-  * 
+  *
   * @brief Wrapper around uint64_t, used by FFMPEG to represent channel layout.
-  * 
+  *
   * @author Jive Helix (jivehelix@gmail.com)
   * @date 11 Feb 2022
   * @copyright Jive Helix
@@ -24,11 +24,142 @@ extern "C"
 FFMPEG_SHIM_POP_IGNORES
 
 
+#include <cassert>
 #include <string>
+#include "clip/error.h"
 
 
 namespace clip
 {
+
+
+namespace detail
+{
+
+
+class ChannelLayout
+{
+public:
+    ChannelLayout(uint64_t mask)
+        :
+        layout_{}
+    {
+        int result = av_channel_layout_from_mask(&this->layout_, mask);
+
+        if (result != 0)
+        {
+            throw ClipError(
+                DescribeError("Failed to initialize channel layout", result));
+        }
+    }
+
+    ~ChannelLayout()
+    {
+        av_channel_layout_uninit(&this->layout_);
+    }
+
+    ChannelLayout(const ChannelLayout &other)
+        :
+        layout_{}
+    {
+        int result = av_channel_layout_copy(&this->layout_, &other.layout_);
+
+        if (result != 0)
+        {
+            throw ClipError(
+                DescribeError("Failed to copy channel layout", result));
+        }
+    }
+
+    ChannelLayout & operator=(const ChannelLayout &other)
+    {
+        // ffmpeg documentation claims that the destination will be
+        // uninitialized prior to copy.
+        int result = av_channel_layout_copy(&this->layout_, &other.layout_);
+
+        if (result != 0)
+        {
+            throw ClipError(
+                DescribeError("Failed to copy channel layout", result));
+        }
+
+        return *this;
+    }
+
+    ChannelLayout(ChannelLayout &&) = delete;
+    ChannelLayout & operator=(ChannelLayout &&) = delete;
+
+    int GetChannelCount() const
+    {
+        return this->layout_.nb_channels;
+    }
+
+    enum AVChannelOrder GetOrder() const
+    {
+        return this->layout_.order;
+    }
+
+    std::string Describe() const
+    {
+        std::string description;
+        static constexpr size_t bufferSize = 64;
+        description.resize(bufferSize);
+
+        int result =
+            av_channel_layout_describe(
+                &this->layout_,
+                description.data(),
+                bufferSize);
+
+        if (result < 0)
+        {
+            throw ClipError(
+                DescribeError("Failed to describe layout", result));
+        }
+
+        if (static_cast<size_t>(result) > bufferSize)
+        {
+            description.resize(static_cast<size_t>(result));
+
+            result =
+                av_channel_layout_describe(
+                    &this->layout_,
+                    description.data(),
+                    description.size());
+
+            if (result < 0)
+            {
+                throw ClipError(
+                    DescribeError("Failed to describe layout", result));
+            }
+
+            assert(static_cast<size_t>(result) == description.size());
+        }
+        else
+        {
+            description.resize(static_cast<size_t>(result));
+        }
+
+        return description;
+    }
+
+    void MakeCopy(AVChannelLayout *target) const
+    {
+        int result = av_channel_layout_copy(target, &this->layout_);
+
+        if (result != 0)
+        {
+            throw ClipError(
+                DescribeError("Failed to copy channel layout", result));
+        }
+    }
+
+private:
+    AVChannelLayout layout_;
+};
+
+
+} // end namespace detail
 
 
 class ChannelLayout
@@ -36,52 +167,27 @@ class ChannelLayout
 public:
     ChannelLayout()
         :
-        channelLayout_(1),
-        channelCount_(1)
+        mask_(1),
+        channelCount_(1),
+        layoutName_()
     {
 
     }
 
     ChannelLayout(uint64_t channelLayout)
         :
-        channelLayout_(channelLayout),
-        channelCount_(
-            av_get_channel_layout_nb_channels(channelLayout)),
+        mask_(channelLayout),
+        channelCount_(),
         layoutName_()
     {
-        // The interface of libavutil/channel_layout.h forces us to iterate
-        // over all indices of standard layouts to find the name.
-        int result = 0;
-        unsigned index = 0;
-
-        uint64_t layout;
-        const char *name = NULL;
-
-        while (true)
-        {
-            result = av_get_standard_channel_layout(
-                index++,
-                &layout,
-                &name);    
-
-            if (result == AVERROR_EOF)
-            {
-                this->layoutName_ = "Non-standard Channel Layout";
-                break;
-            }
-
-            if (layout == this->channelLayout_)
-            {
-                // This is the layout we were looking for.
-                this->layoutName_ = name;
-                break;
-            }
-        }
+        detail::ChannelLayout layout(this->mask_);
+        this->channelCount_ = layout.GetChannelCount();
+        this->layoutName_ = layout.Describe();
     }
 
     uint64_t Get() const
     {
-        return this->channelLayout_; 
+        return this->mask_;
     }
 
     int GetChannelCount() const
@@ -94,8 +200,14 @@ public:
         return this->layoutName_;
     }
 
+    void MakeCopy(AVChannelLayout *target) const
+    {
+        detail::ChannelLayout layout(this->mask_);
+        layout.MakeCopy(target);
+    }
+
 private:
-    uint64_t channelLayout_;
+    uint64_t mask_;
     int channelCount_;
     std::string layoutName_;
 };
