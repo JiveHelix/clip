@@ -1,8 +1,8 @@
 /**
   * @file error.h
-  * 
+  *
   * @brief Exceptions thrown by this library.
-  * 
+  *
   * @author Jive Helix (jivehelix@gmail.com)
   * @date 11 Feb 2022
   * @copyright Jive Helix

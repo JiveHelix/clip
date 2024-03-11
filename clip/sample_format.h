@@ -1,8 +1,8 @@
 /**
   * @file sample_format.h
-  * 
+  *
   * @brief Traits of supported audio sample formats.
-  * 
+  *
   * @author Jive Helix (jivehelix@gmail.com)
   * @date 11 Feb 2022
   * @copyright Jive Helix

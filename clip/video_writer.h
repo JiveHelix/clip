@@ -1,8 +1,8 @@
 /**
   * @file video_writer.h
-  * 
+  *
   * @brief Write video with stride.
-  * 
+  *
   * @author Jive Helix (jivehelix@gmail.com)
   * @date 11 Feb 2022
   * @copyright Jive Helix
@@ -68,12 +68,12 @@ public:
 
         this->output_.WriteFrame();
     }
-    
+
     TimeStamp GetTimeStamp() const
     {
         return this->output_.GetTimeStamp();
     }
-    
+
     void Flush()
     {
         this->output_.Flush();
@@ -138,8 +138,6 @@ public:
                     this->height_,
                     this->dataWidth_);
 
-            // data.reshaped<Eigen::RowMajor>(this->height_, this->dataWidth_);
-        
         // Copy bytes to avFrame
         AVFrame *avFrame = this->output_.GetNextFrame();
         memcpy(avFrame->data[0], this->withStride_.data(), this->fieldSize_);

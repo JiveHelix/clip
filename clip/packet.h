@@ -32,10 +32,10 @@ namespace clip
 {
 
 
-class Packet
+class OutputPacket
 {
 public:
-    Packet()
+    OutputPacket()
         : packet_(av_packet_alloc())
     {
         if (!this->packet_)
@@ -44,7 +44,7 @@ public:
         }
     }
 
-    ~Packet()
+    ~OutputPacket()
     {
         if (this->packet_)
         {
@@ -52,12 +52,12 @@ public:
         }
     }
 
-    Packet(Packet &&other) : packet_(other.packet_)
+    OutputPacket(OutputPacket &&other) : packet_(other.packet_)
     {
         other.packet_ = NULL;
     }
 
-    Packet &operator=(Packet &&other)
+    OutputPacket &operator=(OutputPacket &&other)
     {
         if (this->packet_)
         {
@@ -90,10 +90,77 @@ private:
 };
 
 
+class InputPacket
+{
+public:
+    InputPacket()
+        :
+        packet_(NULL)
+    {
+
+    }
+
+    InputPacket(AVPacket *packet)
+        :
+        packet_(packet)
+    {
+
+    }
+
+    ~InputPacket()
+    {
+        if (this->packet_)
+        {
+            av_packet_unref(this->packet_);
+        }
+    }
+
+    InputPacket(const InputPacket &) = delete;
+
+    InputPacket(InputPacket &&other) : packet_(other.packet_)
+    {
+        other.packet_ = NULL;
+    }
+
+    InputPacket & operator=(InputPacket &&other)
+    {
+        if (this->packet_)
+        {
+            av_packet_unref(this->packet_);
+        }
+
+        this->packet_ = other.packet_;
+        other.packet_ = NULL;
+
+        return *this;
+    }
+
+    InputPacket & operator=(const InputPacket &) = delete;
+
+    operator AVPacket * () const
+    {
+        return this->packet_;
+    }
+
+    AVPacket * operator->() const
+    {
+        return this->packet_;
+    }
+
+    operator bool ()
+    {
+        return (this->packet_ != NULL);
+    }
+
+private:
+    AVPacket *packet_;
+};
+
+
 void LogPacket(
     std::ostream &outputStream,
     const OutputContext &outputContext,
-    const Packet &packet)
+    const AVPacket *packet)
 {
     auto timeBase = outputContext->streams[packet->stream_index]->time_base;
 
@@ -101,7 +168,7 @@ void LogPacket(
     TimeStamp dts(packet->dts, timeBase);
     TimeStamp duration(packet->duration, timeBase);
 
-    outputStream 
+    outputStream
         << "pts: " << pts << " (" << Seconds(pts) << "), "
         << "dts: " << dts << " (" << Seconds(dts) << "), "
         << "duration: " << duration << " (" << Seconds(duration) << "), "

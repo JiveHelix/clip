@@ -1,8 +1,8 @@
 /**
   * @file pixel_format.h
-  * 
+  *
   * @brief Compile-time pixel formats.
-  * 
+  *
   * @author Jive Helix (jivehelix@gmail.com)
   * @date 11 Feb 2022
   * @copyright Jive Helix
@@ -84,8 +84,8 @@ struct ColorType
         std::enable_if_t<
             IsAnyOf(
                 pixelFormat,
-                AV_PIX_FMT_BGR48BE, 
-                AV_PIX_FMT_BGR48LE, 
+                AV_PIX_FMT_BGR48BE,
+                AV_PIX_FMT_BGR48LE,
                 AV_PIX_FMT_RGBA64BE,
                 AV_PIX_FMT_RGBA64LE,
                 AV_PIX_FMT_BGRA64BE,
@@ -109,7 +109,7 @@ struct ColorCount
                 pixelFormat,
                 AV_PIX_FMT_RGB24,
                 AV_PIX_FMT_BGR24,
-                AV_PIX_FMT_BGR48BE, 
+                AV_PIX_FMT_BGR48BE,
                 AV_PIX_FMT_BGR48LE)
         >
     >
@@ -167,7 +167,7 @@ PixelSize GetPixelSize(AVPixelFormat pixelFormat)
             using Traits = PixelTraits<AV_PIX_FMT_RGB24>;
             return {Traits::colorCount, Traits::sizeBytes};
         }
-            
+
         case AV_PIX_FMT_BGR24:
         {
             using Traits = PixelTraits<AV_PIX_FMT_BGR24>;

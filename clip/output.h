@@ -1,8 +1,8 @@
 /**
   * @file output.h
-  * 
+  *
   * @brief Base class for output streams.
-  * 
+  *
   * @author Jive Helix (jivehelix@gmail.com)
   * @date 11 Feb 2022
   * @copyright Jive Helix
@@ -75,7 +75,7 @@ protected:
 
     /*
      * encode one frame and send it to the muxer
-     * return true when encoding is finished, 0 otherwise
+     * return true when encoding is finished, false otherwise
      */
     bool WriteFrame_(AVFrame *source)
     {
@@ -145,21 +145,12 @@ private:
 
 protected:
     Codec codec_;
-
     CodecContext codecContext_;
-
     Stream stream_;
 
 private:
-    Packet packet_;
+    OutputPacket packet_;
 };
-
-
-
-
-
-
-
 
 
 } // namespace clip

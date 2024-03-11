@@ -1,8 +1,8 @@
 /**
   * @file create_video.h
-  * 
+  *
   * @brief Create a generated video.
-  * 
+  *
   * @author Jive Helix (jivehelix@gmail.com)
   * @date 11 Feb 2022
   * @copyright Jive Helix
@@ -98,6 +98,6 @@ void CreateVideo(
                 videoOptions.framesPerSecond),
             duration);
     }
-    
+
     outputContext->Finalize();
 }

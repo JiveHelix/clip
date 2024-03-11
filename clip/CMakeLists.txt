@@ -6,10 +6,10 @@ target_include_directories(clip INTERFACE ${PROJECT_SOURCE_DIR})
 target_link_libraries(
     clip
     INTERFACE
-    CONAN_PKG::ffmpeg
     CONAN_PKG::fmt
     CONAN_PKG::jive
-    CONAN_PKG::tau)
+    CONAN_PKG::tau
+    CONAN_PKG::ffmpeg)
 
 install(
     DIRECTORY ${PROJECT_SOURCE_DIR}/clip

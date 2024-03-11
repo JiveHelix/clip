@@ -1,8 +1,8 @@
 /**
   * @file video_output.h
-  * 
+  *
   * @brief Creates a video output stream.
-  * 
+  *
   * @author Jive Helix (jivehelix@gmail.com)
   * @date 11 Feb 2022
   * @copyright Jive Helix
@@ -120,7 +120,7 @@ public:
 
     AVFrame * GetNextFrame()
     {
-        // The encoder may still be using the last frame passed ot it.
+        // The encoder may still be using the last frame passed to it.
         // Create a new frame if necessary.
         this->frame_.MakeWritable();
 
@@ -135,7 +135,7 @@ public:
             return this->frame_;
         }
     }
-    
+
     size_t GetStride() const
     {
         if (this->options_.inPixelFormat != this->options_.outPixelFormat)
@@ -156,7 +156,7 @@ public:
     void WriteFrame()
     {
         this->FinishFrame_();
-        this->WriteFrame_(this->frame_);  
+        this->WriteFrame_(this->frame_);
     }
 
     TimeStamp GetTimeStamp() const
@@ -169,7 +169,7 @@ private:
     {
         this->frame_->pts = this->timeStamp_.Count();
         ++this->timeStamp_;
-        
+
         if (this->options_.inPixelFormat != this->options_.outPixelFormat)
         {
             // The frame must be transcoded to the output format.

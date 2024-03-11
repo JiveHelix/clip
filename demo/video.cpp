@@ -1,8 +1,8 @@
 /**
   * @file video.cpp
-  * 
+  *
   * @brief Generates a video using default video options.
-  * 
+  *
   * @author Jive Helix (jivehelix@gmail.com)
   * @date 11 Feb 2022
   * @copyright Jive Helix

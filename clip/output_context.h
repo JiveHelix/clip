@@ -46,7 +46,7 @@ class OutputContext
 {
 private:
     class Context
-    { 
+    {
     public:
         Context(const AVOutputFormat *outputFormat)
             :

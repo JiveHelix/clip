@@ -3,7 +3,7 @@ from conans import ConanFile, CMake
 
 class ClipConan(ConanFile):
     name = "clip"
-    version = "1.2.4"
+    version = "1.2.5"
 
     scm = {
         "type": "git",
@@ -51,5 +51,5 @@ class ClipConan(ConanFile):
         self.requires("jive/[~1]")
         self.requires("tau/[~1]")
         self.requires("eigen/3.4.0")
-        self.requires("ffmpeg/6.1")
         self.requires("fmt/[~10]")
+        self.requires("ffmpeg/6.1")

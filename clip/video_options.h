@@ -1,8 +1,8 @@
 /**
   * @file video_options.h
-  * 
+  *
   * @brief Options to configure clip::VideoOutput.
-  * 
+  *
   * @author Jive Helix (jivehelix@gmail.com)
   * @date 11 Feb 2022
   * @copyright Jive Helix
@@ -30,7 +30,7 @@ namespace clip
 enum class Preset: uint8_t
 {
     superfast = 0,
-    verfast,
+    veryfast,
     faster,
     fast,
     medium,
@@ -43,7 +43,7 @@ enum class Preset: uint8_t
 
 const char * presetStrings[] = {
     "superfast",
-    "verfast",
+    "veryfast",
     "faster",
     "fast",
     "medium",

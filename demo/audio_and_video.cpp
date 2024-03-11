@@ -1,8 +1,8 @@
 /**
   * @file audio_and_video.cpp
-  * 
+  *
   * @brief Demonstrates the generation of a video with an audio sweep.
-  * 
+  *
   * @author Jive Helix (jivehelix@gmail.com)
   * @date 11 Feb 2022
   * @copyright Jive Helix

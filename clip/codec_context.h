@@ -1,8 +1,8 @@
 /**
   * @file codec_context.h
-  * 
+  *
   * @brief Wrapper around AVCodecContext.
-  * 
+  *
   * @author Jive Helix (jivehelix@gmail.com)
   * @date 11 Feb 2022
   * @copyright Jive Helix
@@ -28,6 +28,7 @@ FFMPEG_SHIM_POP_IGNORES
 
 namespace clip
 {
+
 
 class CodecContext
 {
@@ -63,6 +64,7 @@ public:
 private:
     AVCodecContext *context_;
 };
+
 
 } // end namespace clip
 
