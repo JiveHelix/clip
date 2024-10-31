@@ -118,6 +118,11 @@ public:
         }
     }
 
+    Resolution GetResolution() const
+    {
+        return {this->options_.width, this->options_.height};
+    }
+
     AVFrame * GetNextFrame()
     {
         // The encoder may still be using the last frame passed to it.

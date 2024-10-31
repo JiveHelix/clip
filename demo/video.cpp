@@ -37,7 +37,7 @@ int main(int argc, char **argv)
             clip::CircleGradientColors<uint16_t>
         >(
             baseName,
-            clip::VideoOptions::MakeDefault(),
+            clip::VideoOptions::MakeDefault(clip::hd),
             streamDuration);
     }
     catch (clip::ClipError &error)

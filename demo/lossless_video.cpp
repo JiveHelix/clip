@@ -1,8 +1,8 @@
 /**
   * @file lossless_video.cpp
-  * 
+  *
   * @brief Generates a lossless mkv.
-  * 
+  *
   * @author Jive Helix (jivehelix@gmail.com)
   * @date 11 Feb 2022
   * @copyright Jive Helix
@@ -37,7 +37,7 @@ int main(int argc, char **argv)
             clip::CircleGradientColors<uint16_t>
         >(
             baseName,
-            clip::VideoOptions::MakeLossless(),
+            clip::VideoOptions::MakeLossless(clip::hd),
             streamDuration);
     }
     catch (clip::ClipError &error)

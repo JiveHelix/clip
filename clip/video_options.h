@@ -23,6 +23,9 @@ extern "C"
 FFMPEG_SHIM_POP_IGNORES
 
 
+#include "clip/resolution.h"
+
+
 namespace clip
 {
 
@@ -66,12 +69,12 @@ struct VideoOptions
     int profile;
     Preset preset;
 
-    static VideoOptions MakeDefault()
+    static VideoOptions MakeDefault(const Resolution &resolution)
     {
         VideoOptions result
         {
-            .height = 1080,
-            .width = 1920,
+            .height = resolution.height,
+            .width = resolution.width,
             .inPixelFormat = AV_PIX_FMT_RGB24,
             .outPixelFormat = AV_PIX_FMT_YUV420P,
             .framesPerSecond = 30,
@@ -85,18 +88,9 @@ struct VideoOptions
         return result;
     }
 
-    static VideoOptions Make4k()
+    static VideoOptions MakeLossless(const Resolution &resolution)
     {
-        auto result = MakeDefault();
-        result.height = 2160;
-        result.width = 3840;
-
-        return result;
-    }
-
-    static VideoOptions MakeLossless()
-    {
-        auto result = MakeDefault();
+        auto result = MakeDefault(resolution);
         result.qualityFactor = 0;
         result.profile = FF_PROFILE_H264_HIGH_444;
         result.gopSize = 1;

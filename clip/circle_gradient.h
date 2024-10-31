@@ -1,8 +1,8 @@
 /**
   * @file circle_gradient.h
-  * 
+  *
   * @brief Creates a moving circle gradient.
-  * 
+  *
   * @author Jive Helix (jivehelix@gmail.com)
   * @date 11 Feb 2022
   * @copyright Jive Helix
@@ -26,7 +26,7 @@ template<typename T>
 class CircleGradient
 {
 public:
-    using Values = 
+    using Values =
         Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
     CircleGradient(
@@ -145,8 +145,8 @@ template<typename T>
 class CircleGradientColors
 {
 public:
-    using ColorMap = tau::ColorMap<tau::RgbMatrix<uint8_t>>;
-    using Output = ColorMap::Colors;
+    using Output = tau::RgbMatrix<uint8_t>;
+    using ColorMap = tau::ColorMap<Output>;
 
     static_assert(
         tau::MatrixTraits<Output>::columns != Eigen::Dynamic,

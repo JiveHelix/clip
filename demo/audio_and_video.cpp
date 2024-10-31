@@ -163,7 +163,7 @@ int main(int argc, char **argv)
             clip::CircleGradientColors<uint16_t>
         >(
             baseName,
-            clip::VideoOptions::MakeDefault(),
+            clip::VideoOptions::MakeDefault(clip::hd),
             clip::AudioOptions<AV_SAMPLE_FMT_S16P>{
                 44100,
                 128000,
