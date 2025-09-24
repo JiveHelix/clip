@@ -82,11 +82,6 @@ void CreateVideo(
     {
         std::cout << "Frame width does not match stride." << std::endl;
 
-        auto videoWriter = clip::StrideVideoWriter(
-            static_cast<size_t>(videoOptions.height),
-            dataWidth,
-            videoOutput);
-
         GenerateVideo(
             clip::StrideVideoWriter(
                 static_cast<size_t>(videoOptions.height),

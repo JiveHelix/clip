@@ -1,8 +1,8 @@
 /**
   * @file reformat.h
-  * 
+  *
   * @brief Convert video to other formats.
-  * 
+  *
   * @author Jive Helix (jivehelix@gmail.com)
   * @date 11 Feb 2022
   * @copyright Jive Helix

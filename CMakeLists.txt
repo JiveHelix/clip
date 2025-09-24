@@ -7,28 +7,15 @@ setup_project()
 
 add_subdirectory(clip)
 
-if (ENABLE_TESTING)
-    if (${PROJECT_IS_TOP_LEVEL} OR ${RECURSIVE_BUILD_TESTS})
-        add_subdirectory(test)
-    endif ()
-endif ()
+include(${CMAKE_CURRENT_LIST_DIR}/cmake_includes/enable_extras.cmake)
+enable_extras()
 
-if (${PROJECT_IS_TOP_LEVEL})
-    option(
-        BUILD_DEMO
-        "Build the demo"
-        ${ENABLES_DEFAULT})
-
-    if (${BUILD_DEMO})
-        add_subdirectory(demo)
-    endif ()
-
-    option(
-        BUILD_TOOLS
-        "Build the tools"
-        ${ENABLES_DEFAULT})
-
-    if (${BUILD_TOOLS})
+if (PROJECT_IS_TOP_LEVEL)
+    if (EXISTS "tools/CMakeLists.txt")
         add_subdirectory(tools)
+    endif ()
+
+    if (EXISTS "demo/CMakeLists.txt")
+        add_subdirectory(demo)
     endif ()
 endif ()

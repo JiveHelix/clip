@@ -146,7 +146,7 @@ class CircleGradientColors
 {
 public:
     using Output = tau::RgbMatrix<uint8_t>;
-    using ColorMap = tau::ColorMap<Output>;
+    using ColorMap = tau::BasicColorMap<Output>;
 
     static_assert(
         tau::MatrixTraits<Output>::columns != Eigen::Dynamic,
