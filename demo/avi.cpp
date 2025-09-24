@@ -1,6 +1,7 @@
 
-#include <stdlib.h>
+#include <cstdlib>
 #include <iostream>
+#include <optional>
 
 #include "clip/ffmpeg_shim.h"
 

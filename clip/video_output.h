@@ -73,6 +73,8 @@ public:
         this->codecContext_->gop_size = videoOptions.gopSize;
 
         this->codecContext_->pix_fmt = videoOptions.outPixelFormat;
+        // this->codecContext_->level = videoOptions.level;
+        // this->codecContext_->codec_id = videoOptions.codecId;
 
         this->frame_ = Frame(
             videoOptions.outPixelFormat,

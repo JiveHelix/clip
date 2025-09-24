@@ -18,7 +18,6 @@ class ClipConan(ConanFile):
         if self.settings.os == "Linux":
             self.options["ffmpeg"].with_pulse = False
             self.options["ffmpeg"].with_openjpeg = False
-            self.options["ffmpeg"].with_libx264 = False
             self.options["ffmpeg"].with_libx265 = False
 
     def build_requirements(self):

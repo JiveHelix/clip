@@ -1,6 +1,19 @@
 #pragma once
 
 
+#ifndef __STDC_CONSTANT_MACROS
+#define __STDC_CONSTANT_MACROS
+#endif
+
+#ifndef __STDC_LIMIT_MACROS
+#define __STDC_LIMIT_MACROS
+#endif
+
+#ifndef __STDC_FORMAT_MACROS
+#define __STDC_FORMAT_MACROS
+#endif
+
+
 #ifdef _WIN32
 
 #define FFMPEG_SHIM_PUSH_IGNORES \

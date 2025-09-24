@@ -67,6 +67,8 @@ struct VideoOptions
     int64_t bitRate;
     int gopSize;
     int profile;
+    int level;
+    AVCodecID codecId;
     Preset preset;
 
     static VideoOptions MakeDefault(const Resolution &resolution)
@@ -82,6 +84,8 @@ struct VideoOptions
             .bitRate = -1,
             .gopSize = 32,
             .profile = FF_PROFILE_H264_HIGH,
+            .level = 51,
+            .codecId = AV_CODEC_ID_H264,
             .preset = Preset::medium
         };
 
