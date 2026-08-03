@@ -5,7 +5,7 @@ class ClipConan(ConanFile):
     name = "clip"
     version = "1.3.0"
 
-    python_requires = "boiler/0.1"
+    python_requires = "boiler/0.2"
     python_requires_extend = "boiler.HeaderConanFile"
 
     license = "MIT"
