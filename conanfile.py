@@ -20,6 +20,9 @@ class ClipConan(ConanFile):
             self.options["ffmpeg"].with_openjpeg = False
             self.options["ffmpeg"].with_libx265 = False
 
+        elif self.settings.os == "Windows":
+            self.options["ffmpeg"].with_openjpeg = False
+
     def build_requirements(self):
         self.test_requires("catch2/2.13.8")
 

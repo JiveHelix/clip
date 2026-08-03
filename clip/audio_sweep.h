@@ -40,7 +40,7 @@ class AudioSweep
 public:
 
     using Sample = typename Options::Format::type;
-    
+
     using Output = Eigen::VectorX<Sample>;
 
     static constexpr auto pi = tau::Angles<double>::pi;
@@ -55,7 +55,7 @@ public:
         options_(options),
         start_hz_(start_hz),
         stop_hz_(stop_hz),
-        sampleCount_(static_cast<ssize_t>(sampleCount)),
+        sampleCount_(static_cast<int64_t>(sampleCount)),
         time_(0.0),
         samplePeriod_(2 * pi * start_hz / options.sampleRate),
         samplePeriodIncrement_(
@@ -63,7 +63,7 @@ public:
             / (options.sampleRate * options.sampleRate)),
         maxSamplePeriod_(2 * pi * stop_hz / options.sampleRate)
     {
-        assert(sampleCount <= std::numeric_limits<ssize_t>::max());
+        assert(sampleCount <= std::numeric_limits<int64_t>::max());
     }
 
     void Reset()
@@ -96,7 +96,7 @@ public:
         double value1 = sin(time);
         double value2 = sin(2.0 * time) * .75;
         double value3 = sin(2.5 * time) * .8;
-        
+
         return (value1 + value2 + value3) / 3.0;
     }
 
@@ -107,7 +107,7 @@ public:
             output->resize(this->sampleCount_);
         }
 
-        for (ssize_t i = 0; i < this->sampleCount_; ++i)
+        for (int64_t i = 0; i < this->sampleCount_; ++i)
         {
             (*output)[i] = Scale<SampleTraits<Sample>>(GetSample(this->time_));
 
@@ -124,7 +124,7 @@ private:
     Options options_;
     double start_hz_;
     double stop_hz_;
-    ssize_t sampleCount_;
+    int64_t sampleCount_;
     double time_;
     double samplePeriod_;
     double samplePeriodIncrement_;
