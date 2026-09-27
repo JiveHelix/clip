@@ -4,7 +4,7 @@
 
 #include <fields/fields.h>
 #include <pex/select.h>
-#include <pex/selectors.h>
+#include <pex/tailors.h>
 #include <vector>
 #include <tau/size.h>
 
@@ -22,10 +22,6 @@ struct Resolution
     {
         return {this->width, this->height};
     }
-
-    static constexpr auto fields = std::make_tuple(
-        fields::Field(&Resolution::width, "width"),
-        fields::Field(&Resolution::height, "height"));
 
     static constexpr auto fieldsTypeName = "Resolution";
 };
@@ -89,7 +85,7 @@ struct ResolutionConverter
 
 
 using ResolutionSelect = pex::MakeSelect<ResolutionChoices, pex::GetTag>;
-using ResolutionControl = pex::ControlSelector<ResolutionSelect>;
+using ResolutionControl = pex::ControlTailor<ResolutionSelect>;
 
 
 }

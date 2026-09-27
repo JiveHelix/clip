@@ -3,7 +3,7 @@ from conan import ConanFile
 
 class ClipConan(ConanFile):
     name = "clip"
-    version = "1.3.0"
+    version = "1.4.0"
 
     python_requires = "boiler/0.2"
     python_requires_extend = "boiler.HeaderConanFile"
@@ -27,6 +27,6 @@ class ClipConan(ConanFile):
         self.test_requires("catch2/2.13.8")
 
     def requirements(self):
-        self.requires("tau/[>=1.14 <2]")
+        self.requires("tau/[>=1.16 <2]")
         self.requires("fmt/[~10]")
         self.requires("ffmpeg/[~6]")
